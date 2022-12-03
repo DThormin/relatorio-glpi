@@ -1,9 +1,10 @@
 SELECT 
 chamado.id,
-usuario.users_id_recipient,
+(select firstname from glpi_users where id = (chamado.users_id_recipient)),
 chamado.name,
-REPLACE(chamado.content, '&lt;p&gt;', '   ' )
+REPLACE(chamado.content, '&lt;p&gt;', '   ' ),
 usuario.name,
+REPLACE(atividade.content, '&lt;p&gt;', '   ' ),
 tarefa.actual_begin,
 tarefa.actual_end,
 sec_to_time(tarefa.actual_actiontime),
@@ -16,6 +17,9 @@ INNER JOIN glpi_tickettasks AS atividade ON chamado.id = atividade.tickets_id
 INNER JOIN glpi_plugin_actualtime_tasks AS tarefa ON atividade.id = tarefa.tasks_id
       AND atividade.users_id = tarefa.users_id
 INNER JOIN glpi_users AS usuario ON atividade.users_id = usuario.id 
-    WHERE atividade.users_id = 715
-and chamado.status = 6
-and chamado.global_validation in (1,6)
+    WHERE usuario.name like 'user_glpi_users'
+and chamado.users_id_lastupdater = 451
+ and chamado.status = 6
+and chamado.global_validation in (1,3)
+AND month(atividade.date_mod) = 08
+#####
