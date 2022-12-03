@@ -1,0 +1,21 @@
+SELECT 
+chamado.id,
+usuario.users_id_recipient,
+chamado.name,
+REPLACE(chamado.content, '&lt;p&gt;', '   ' )
+usuario.name,
+tarefa.actual_begin,
+tarefa.actual_end,
+sec_to_time(tarefa.actual_actiontime),
+tarefa.actual_actiontime,
+CASE 
+WHEN chamado.global_validation = 1 then 'Não está sujeita a aprovação' 
+when chamado.global_validation = 3 then 'Concedida' END
+FROM glpi_tickets AS chamado
+INNER JOIN glpi_tickettasks AS atividade ON chamado.id = atividade.tickets_id
+INNER JOIN glpi_plugin_actualtime_tasks AS tarefa ON atividade.id = tarefa.tasks_id
+      AND atividade.users_id = tarefa.users_id
+INNER JOIN glpi_users AS usuario ON atividade.users_id = usuario.id 
+    WHERE atividade.users_id = 715
+and chamado.status = 6
+and chamado.global_validation in (1,6)
