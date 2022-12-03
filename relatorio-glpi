@@ -23,3 +23,5 @@ INNER JOIN glpi_users AS usuario ON atividade.users_id = usuario.id
 WHERE usuario.name = 'user_glpi_users'
 AND month(tarefa.actual_end) = 10
 AND year(tarefa.actual_end) = 2022
+
+#################################################
