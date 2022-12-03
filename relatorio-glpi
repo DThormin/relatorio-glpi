@@ -11,9 +11,9 @@ tarefa.actual_begin AS 'Data Início Tarefa',
 tarefa.actual_end AS 'Data Fechamento Tarefa',
 (tarefa.actual_actiontime/3600) AS 'Tempo em Hora Decimal',
 
-CASE 
+(CASE 
 WHEN chamado.global_validation = 1 then 'Não está sujeita a aprovação' 
-when chamado.global_validation = 3 then 'Concedida' END
+when chamado.global_validation = 3 then 'Concedida' END) as Aprovacao
 FROM glpi_tickets AS chamado
 INNER JOIN glpi_itilcategories AS itil ON chamado.itilcategories_id = itil.id
 INNER JOIN glpi_tickettasks AS atividade ON chamado.id = atividade.tickets_id
