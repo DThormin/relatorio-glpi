@@ -1,19 +1,12 @@
 SELECT 
-chamado.id AS 'Chamado',
+CONCAT( chamado.id, '-', tarefa.id) AS 'Chamado' , 
 (select firstname from glpi_users where id = (chamado.users_id_recipient)) AS 'Requerente',
 chamado.name AS 'Titulo',
 REPLACE ( REPLACE (REPLACE (REPLACE (REPLACE (REPLACE(chamado.content, '&lt;p&gt;', '  ' ), '&lt;br', '  ' ), '&gt;', '  '), '&lt;/p', '  '), '&lt;', '  '), '&amp;', '  ') AS 'Descricao',
 usuario.name as Tecnico,
 itil.name AS Categoria,
 fechamento.name AS 'Modelo de Tarefa',
-
-/*tarefa.actual_begin,
-tarefa.actual_end,
-sec_to_time(tarefa.actual_actiontime),*/
-
-/*atividade.date_creation as 'Data Início Tarefa',*/
 chamado.date as 'Data Abertura Chamado',
-/*tarefa.actual_end AS 'Data Fechamento',*/
 tarefa.actual_begin AS 'Data Início Tarefa',
 tarefa.actual_end AS 'Data Fechamento Tarefa',
 (tarefa.actual_actiontime/3600) AS 'Tempo em Hora Decimal',
@@ -21,30 +14,12 @@ tarefa.actual_end AS 'Data Fechamento Tarefa',
 CASE 
 WHEN chamado.global_validation = 1 then 'Não está sujeita a aprovação' 
 when chamado.global_validation = 3 then 'Concedida' END
-
-
 FROM glpi_tickets AS chamado
-
 INNER JOIN glpi_itilcategories AS itil ON chamado.itilcategories_id = itil.id
 INNER JOIN glpi_tickettasks AS atividade ON chamado.id = atividade.tickets_id
-
-
 INNER JOIN glpi_tasktemplates AS fechamento ON atividade.tasktemplates_id = fechamento.id
-
-
 INNER JOIN glpi_plugin_actualtime_tasks AS tarefa ON atividade.id = tarefa.tasks_id
-      AND atividade.users_id = tarefa.users_id
 INNER JOIN glpi_users AS usuario ON atividade.users_id = usuario.id 
-
-
 WHERE usuario.name = 'user_glpi_users'
- 
-
-/*and chamado.status IN (5,6)*/
-
-and chamado.global_validation in (1,3)
-
 AND month(tarefa.actual_end) = 10
 AND year(tarefa.actual_end) = 2022
-/*GROUP BY chamado.id*/
-
